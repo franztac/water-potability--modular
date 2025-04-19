@@ -1,28 +1,72 @@
 import pandas as pd
 import numpy as np
 import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="[%(levelname)s - %(filename)s] %(message)s"
+)
 
 
-train_df = pd.read_csv("./data/raw/train.csv")
-test_df = pd.read_csv("./data/raw/test.csv")
+def load_data(filepath):
+    try:
+        logging.info(f"loading: {filepath}")
+        return pd.read_csv(filepath)
+    except Exception as e:
+        logging.error(f"error loading data from {filepath}: {e}")
+        raise
+
+
+# train_df = pd.read_csv("./data/raw/train.csv")
+# test_df = pd.read_csv("./data/raw/test.csv")
 
 
 def fill_missing_values_with_median(df_original):
-    df = df_original.copy()
-    for column in df.columns:
-        if df[column].isna().any():
-            median_value = df[column].median()
-            df[column] = df[column].fillna(median_value)
+    try:
+        logging.info("filling missing values with median...")
+        df = df_original.copy()
+        for column in df.columns:
+            if df[column].isna().any():
+                median_value = df[column].median()
+                df[column] = df[column].fillna(median_value)
 
-    return df
+        return df
+
+    except Exception as e:
+        logging.error(f"error filling missing values: {e}")
+        raise
 
 
-# Fill missing values with median
-train_processed_df = fill_missing_values_with_median(train_df)
-test_processed_df = fill_missing_values_with_median(test_df)
+def save_data(df, filepath):
+    try:
+        logging.info(f"saving data to {filepath}")
+        return df.to_csv(filepath, index=False)
+    except Exception as e:
+        logging.error(f"error saving data to {filepath}: {e}")
 
-data_path = os.path.join("data", "processed")
-os.makedirs(data_path, exist_ok=True)
 
-train_processed_df.to_csv(os.path.join(data_path, "train_processed.csv"), index=False)
-test_processed_df.to_csv(os.path.join(data_path, "test_processed.csv"), index=False)
+# train_processed_df.to_csv(os.path.join(data_path, "train_processed.csv"), index=False)
+# test_processed_df.to_csv(os.path.join(data_path, "test_processed.csv"), index=False)
+
+
+def main():
+    raw_datapath = "./data/raw"
+    processed_datapath = "./data/processed"
+
+    train_df = load_data(os.path.join(raw_datapath, "train.csv"))
+    test_df = load_data(os.path.join(raw_datapath, "test.csv"))
+
+    train_processed_df = fill_missing_values_with_median(train_df)
+    test_processed_df = fill_missing_values_with_median(test_df)
+
+    logging.info(f"creating {processed_datapath} folder")
+    os.makedirs(processed_datapath, exist_ok=True)
+
+    save_data(
+        train_processed_df, os.path.join(processed_datapath, "train_processed.csv")
+    )
+    save_data(test_processed_df, os.path.join(processed_datapath, "test_processed.csv"))
+
+
+if __name__ == "__main__":
+    main()

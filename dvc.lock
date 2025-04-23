@@ -59,14 +59,14 @@ stages:
     deps:
     - path: model.pkl
       hash: md5
-      md5: f2250ebdaea9e29f078b06e20f547084
-      size: 7341711
+      md5: 417c69aa90bde21512ce3ec5a6deab09
+      size: 7347667
     - path: src/model_eval.py
       hash: md5
-      md5: 305639cac4718ddc222c010626486b9b
-      size: 743
+      md5: 93658cef089e2fbe048f07ccf9f68b9c
+      size: 2979
     outs:
     - path: metrics.json
       hash: md5
-      md5: c56d266cb29062537502b9b08d0c5a62
-      size: 125
+      md5: c3df9f3a610269f8eb1ebf2872f81c0c
+      size: 149

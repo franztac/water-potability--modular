@@ -8,7 +8,7 @@ logging.basicConfig(
 )
 
 
-def load_data(filepath):
+def load_data(filepath: str) -> pd.DataFrame:
     try:
         logging.info(f"loading: {filepath}")
         return pd.read_csv(filepath)
@@ -37,7 +37,7 @@ def fill_missing_values_with_median(df_original):
         raise
 
 
-def save_data(df, filepath):
+def save_data(df: pd.DataFrame, filepath: str) -> None:
     try:
         logging.info(f"saving data to {filepath}")
         return df.to_csv(filepath, index=False)
@@ -50,22 +50,29 @@ def save_data(df, filepath):
 
 
 def main():
-    raw_datapath = "./data/raw"
-    processed_datapath = "./data/processed"
+    try:
+        raw_datapath = "./data/raw"
+        processed_datapath = "./data/processed"
 
-    train_df = load_data(os.path.join(raw_datapath, "train.csv"))
-    test_df = load_data(os.path.join(raw_datapath, "test.csv"))
+        train_df = load_data(os.path.join(raw_datapath, "train.csv"))
+        test_df = load_data(os.path.join(raw_datapath, "test.csv"))
 
-    train_processed_df = fill_missing_values_with_median(train_df)
-    test_processed_df = fill_missing_values_with_median(test_df)
+        train_processed_df = fill_missing_values_with_median(train_df)
+        test_processed_df = fill_missing_values_with_median(test_df)
 
-    logging.info(f"creating {processed_datapath} folder")
-    os.makedirs(processed_datapath, exist_ok=True)
+        logging.info(f"creating {processed_datapath} folder")
+        os.makedirs(processed_datapath, exist_ok=True)
 
-    save_data(
-        train_processed_df, os.path.join(processed_datapath, "train_processed.csv")
-    )
-    save_data(test_processed_df, os.path.join(processed_datapath, "test_processed.csv"))
+        save_data(
+            train_processed_df, os.path.join(processed_datapath, "train_processed.csv")
+        )
+        save_data(
+            test_processed_df, os.path.join(processed_datapath, "test_processed.csv")
+        )
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        raise
 
 
 if __name__ == "__main__":
